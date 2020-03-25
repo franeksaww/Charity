@@ -1,2 +1,6 @@
 .idea
 venv
+.vscode
+node_modules
+package-lock.json
+project
