@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from main_apk.forms import LoginForm
-from main_apk.models import DonationModel, InstitutionModel
+from main_apk.models import DonationModel, InstitutionModel, CategoryModel
 
 
 class MainPageView(View):
@@ -67,7 +67,11 @@ class RegisterView(View):
 
 class FormView(View):
     def get(self, request):
-        return render(request, 'form.html')
+        if request.user.is_authenticated:
+            categories = CategoryModel.objects.all()
+            return render(request, 'form.html', {'categories': categories})
+        else:
+            return redirect('login_page')
 
 
 class FormConfirmationView(View):
