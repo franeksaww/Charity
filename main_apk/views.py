@@ -77,6 +77,25 @@ class FormView(View):
         else:
             return redirect('login_page')
 
+    def post(self, request):
+        new_donation = DonationModel()
+        new_donation.quantity = request.POST['bags']
+        new_donation.address = request.POST['address'] + ', ' + request.POST['postcode']
+        new_donation.phone_number = request.POST['phone']
+        new_donation.city = request.POST['city']
+        new_donation.pick_up_date = request.POST['data']
+        new_donation.pick_up_time = request.POST['time']
+        new_donation.pick_up_comment = request.POST['more_info']
+        new_donation.user = request.user
+        new_donation.institution = InstitutionModel.objects.get(pk=request.POST['organization'])
+        new_donation.save()
+        for category in request.POST['categories']:
+            new_donation.categories.add(CategoryModel.objects.get(pk=category))
+        new_donation.save()
+        return redirect('form_confirmation_page')
+
+
+
 
 class FormConfirmationView(View):
     def get(self, request):
