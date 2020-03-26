@@ -62,6 +62,7 @@
                                 type="checkbox"
                                 name="categories"
                                 value="{{ category.id }}"
+                                class="cat_elem"
                         />
                         <span class="checkbox"></span>
                         <span class="description"
@@ -83,13 +84,13 @@
                 <div class="form-group form-group--inline">
                     <label>
                         Liczba 60l worków:
-                        <input type="number" name="bags" step="1" min="1"/>
+                        <input id="bags_get" type="number" name="bags" step="1" min="1"/>
                     </label>
                 </div>
 
                 <div class="form-group form-group--buttons">
                     <button type="button" class="btn prev-step">Wstecz</button>
-                    <button type="button" class="btn next-step">Dalej</button>
+                    <button type="button" class="btn next-step make_it_happen">Dalej</button>
                 </div>
             </div>
 
@@ -98,33 +99,20 @@
             <div data-step="3">
                 <h3>Wybierz organizacje, której chcesz pomóc:</h3>
 
-                <div class="form-group form-group--checkbox">
+                {% for inst in institutions %}
+                <div class="form-group form-group--checkbox inst_elem" id="ist_{{ inst.id }}">
                     <label>
-                        <input type="radio" name="organization" value="old"/>
+                        <input type="radio" name="organization" value="{{ inst.id }}" data-cat="{% for category in inst.categories.all %}{{ category.id }}{% endfor %}" value="{{ inst.id }}"/>
                         <span class="checkbox radio"></span>
                         <span class="description">
-                  <div class="title">Fundacja “Bez domu”</div>
+                  <div class="title">{{ inst.name }}</div>
                   <div class="subtitle">
-                    Cel i misja: Pomoc dla osób nie posiadających miejsca
-                    zamieszkania
+                    {{ inst.description }}
                   </div>
                 </span>
                     </label>
                 </div>
-
-                <div class="form-group form-group--checkbox">
-                    <label>
-                        <input type="radio" name="organization" value="old"/>
-                        <span class="checkbox radio"></span>
-                        <span class="description">
-                  <div class="title">Fundacja “Dla dzieci"</div>
-                  <div class="subtitle">
-                    Cel i misja: Pomoc osobom znajdującym się w trudnej sytuacji
-                    życiowej.
-                  </div>
-                </span>
-                    </label>
-                </div>
+                {% endfor %}
 
                 <div class="form-group form-group--buttons">
                     <button type="button" class="btn prev-step">Wstecz</button>
@@ -180,7 +168,7 @@
                 </div>
                 <div class="form-group form-group--buttons">
                     <button type="button" class="btn prev-step">Wstecz</button>
-                    <button type="button" class="btn next-step">Dalej</button>
+                    <button type="button" class="btn next-step" id="collect">Dalej</button>
                 </div>
             </div>
 
@@ -194,7 +182,7 @@
                         <ul>
                             <li>
                                 <span class="icon icon-bag"></span>
-                                <span class="summary--text"
+                                <span class="summary--text" id="bags"
                                 >4 worki ubrań w dobrym stanie dla dzieci</span
                                 >
                             </li>

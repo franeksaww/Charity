@@ -2,9 +2,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework import generics
 
 from main_apk.forms import LoginForm
 from main_apk.models import DonationModel, InstitutionModel, CategoryModel
+from main_apk.serializers import CategorySerializer, InstitutionSerializer
 
 
 class MainPageView(View):
@@ -22,13 +24,16 @@ class MainPageView(View):
                 continue
             else:
                 fund += 1
-        return render(request, 'index.html', {'quantity': quantity, 'fund': fund, 'inst_fund': inst_fund, 'inst_ngo': inst_ngo,'inst_other': inst_other})
+        return render(request, 'index.html',
+                      {'quantity': quantity, 'fund': fund, 'inst_fund': inst_fund, 'inst_ngo': inst_ngo,
+                       'inst_other': inst_other})
 
 
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
         return render(request, 'login.html', {"form": form})
+
     def post(self, request):
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -44,7 +49,6 @@ class LoginView(View):
             return redirect('register_page')
 
 
-
 class RegisterView(View):
     def get(self, request):
         return render(request, 'register.html')
@@ -56,20 +60,20 @@ class RegisterView(View):
         password = request.POST['password']
         password2 = request.POST['password2']
         new_user = User.objects.create_user(first_name=name,
-                                 last_name=surname,
-                                 username=email,
-                                 password=password,
-                                 email=email)
+                                            last_name=surname,
+                                            username=email,
+                                            password=password,
+                                            email=email)
         new_user.save()
         return redirect('login_page')
-
 
 
 class FormView(View):
     def get(self, request):
         if request.user.is_authenticated:
             categories = CategoryModel.objects.all()
-            return render(request, 'form.html', {'categories': categories})
+            institutions = InstitutionModel.objects.all()
+            return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
         else:
             return redirect('login_page')
 
@@ -83,3 +87,23 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('main_page')
+
+
+class CategoryListView(generics.ListCreateAPIView):
+    queryset = CategoryModel.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CategoryView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CategoryModel.objects.all()
+    serializer_class = CategorySerializer
+
+
+class InstitutionsListView(generics.ListCreateAPIView):
+    queryset = InstitutionModel.objects.all()
+    serializer_class = InstitutionSerializer
+
+
+class InstitutionsView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = InstitutionModel.objects.all()
+    serializer_class = InstitutionSerializer

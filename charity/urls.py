@@ -26,4 +26,10 @@ urlpatterns = [
     path('form_confirmation/', FormConfirmationView.as_view(), name='form_confirmation_page'),
     path('register/', RegisterView.as_view(), name='register_page'),
     path('logout/', LogoutView.as_view(), name='logout'),
+
+    # rest_api
+    path('api/category/', CategoryListView.as_view(), name='category_all'),
+    path('api/category/<int:id>', CategoryView.as_view(), name='category_details'),
+    path('api/institution/', InstitutionsListView.as_view(), name='institutions_all'),
+    path('api/institution/<int:id>', InstitutionsView.as_view(), name='institutions_details'),
 ]
