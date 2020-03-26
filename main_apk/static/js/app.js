@@ -303,7 +303,22 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       bags_text = ' worków'
     }
+    var rates = document.querySelectorAll('.get_inst_name');
+    var rate_value;
+    for(var i = 0; i < rates.length; i++){
+        if(rates[i].checked){
+            rate_value = rates[i].nextElementSibling.nextElementSibling.children[0].innerHTML;
+    }
+}
     document.querySelector('#bags').innerHTML = bags + bags_text;
+    document.querySelector('#inst_final').innerHTML = 'Dla ' + rate_value;
+    document.querySelector('#postal').innerHTML = document.querySelector('#get_postal').value;
+    document.querySelector('#phone').innerHTML = document.querySelector('#get_phone').value;
+    document.querySelector('#city').innerHTML = document.querySelector('#get_city').value;
+    document.querySelector('#road').innerHTML = document.querySelector('#get_road').value;
+    document.querySelector('#hour').innerHTML = document.querySelector('#get_hour').value;
+    document.querySelector('#date').innerHTML = document.querySelector('#get_date').value;
+    document.querySelector('#more').innerHTML = document.querySelector('#get_more').value;
 
   })
 });
