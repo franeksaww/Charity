@@ -108,6 +108,12 @@ class LogoutView(View):
         return redirect('main_page')
 
 
+class ProfileView(View):
+    def get(self, request):
+        user_stats = request.user
+        return render(request, 'profile.html', {'user_stats':user_stats})
+
+
 class CategoryListView(generics.ListCreateAPIView):
     queryset = CategoryModel.objects.all()
     serializer_class = CategorySerializer

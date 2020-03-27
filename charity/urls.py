@@ -19,7 +19,7 @@ from django.urls import path
 from main_apk.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin_panel'),
     path('', MainPageView.as_view(), name='main_page'),
     path('login/', LoginView.as_view(), name='login_page'),
     path('form/', FormView.as_view(), name='form_page'),
@@ -32,4 +32,5 @@ urlpatterns = [
     path('api/category/<int:id>', CategoryView.as_view(), name='category_details'),
     path('api/institution/', InstitutionsListView.as_view(), name='institutions_all'),
     path('api/institution/<int:id>', InstitutionsView.as_view(), name='institutions_details'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]
