@@ -114,6 +114,20 @@ class ProfileView(View):
         return render(request, 'profile.html', {'user_stats':user_stats})
 
 
+class UserDonationsView(View):
+    def get(self, request):
+        user = request.user
+        donations = DonationModel.objects.filter(user=user).order_by('-pick_up_date')
+        return render(request, 'list_of_donations.html', {'donations': donations})
+
+class UserDonationDetailView(View):
+    def get(self, request, pk):
+        user = request.user
+        donation = DonationModel.objects.get(pk=pk)
+        if donation.user == user:
+            return render(request, 'donation_details..html', {'donation': donation})
+        return redirect('main_page')
+
 class CategoryListView(generics.ListCreateAPIView):
     queryset = CategoryModel.objects.all()
     serializer_class = CategorySerializer

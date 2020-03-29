@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 
 from main_apk.views import *
 
@@ -33,4 +33,6 @@ urlpatterns = [
     path('api/institution/', InstitutionsListView.as_view(), name='institutions_all'),
     path('api/institution/<int:id>', InstitutionsView.as_view(), name='institutions_details'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('donations/', UserDonationsView.as_view(), name='donations'),
+    re_path(r'^donations/(?P<pk>[0-9]*)/$', UserDonationDetailView.as_view(), name='donation_detail'),
 ]

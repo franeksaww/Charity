@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .zui-table {
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+}
+table thead th {
+    background-color: #DDEFEF;
+    border: solid 1px #DDEEEE;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+}
+table tbody td {
+    border: solid 1px #DDEEEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+}
+    </style>
+</head>
+<body>
+<table>
+  <tr>
+    <th>Dla</th>
+    <th>Ilość worków</th>
+    <th>Kategorie</th>
+    <th>Miasto</th>
+    <th>Data odbioru</th>
+    <th>Odebrano</th>
+  </tr>
+  {% for donat in donations %}
+  <tr>
+      <td><a href="/donations/{{ donat.id }}/">{{ donat.institution }}</a></td>
+    <td>{{ donat.quantity }}</td>
+    <td>{% for category in donat.categories.all %}{{ category.name }}{% endfor %}</td>
+    <td>{{ donat.city }}</td>
+    <td>{{ donat.pick_up_date }}, {{ donat.pick_up_time }}</td>
+    <td>{{ donat.status }}</td>
+  </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

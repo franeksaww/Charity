@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h3>ID: {{ donation.id }}</h3>
+    <h3>Dla: {{ donation.institution }}</h3>
+    <h3>Ilość worków: {{ donation.quantity }}</h3>
+    <h3>Data odbioru: {{ donation.pick_up_date }}, {{ donation.pick_up_time }}</h3>
+    <h3>Dodatkowe informacje: {{ donation.pick_up_comment }}</h3>
+    <h3>Adres: {{ donation.address }}</h3>
+    <h3>Miasto:  {{ donation.city }}</h3>
+    <h3>Odebrano: {{ donation.status }}</h3>
+</body>
+</html>

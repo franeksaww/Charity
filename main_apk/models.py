@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-
-
+import datetime
 TYPES = (
     (1, 'fundacja'),
     (2, 'organizacja pozarządowa'),
@@ -37,3 +36,9 @@ class DonationModel(models.Model):
     pick_up_time = models.TimeField()
     pick_up_comment = models.TextField()
     user = models.ForeignKey(User, null=True, default=None, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+
+
+    @property
+    def status(self):
+        return datetime.datetime.now() > datetime.datetime.combine(self.pick_up_date, self.pick_up_time)
