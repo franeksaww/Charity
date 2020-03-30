@@ -1,13 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework import generics
-import hashlib
-from main_apk.forms import LoginForm, UserForm
+from main_apk.forms import LoginForm
 from main_apk.models import DonationModel, InstitutionModel, CategoryModel
 from main_apk.serializers import CategorySerializer, InstitutionSerializer, DonationSerializer
+from main_apk.utils.mail_utils import send_email
 
 
 class MainPageView(View):
@@ -175,6 +174,20 @@ class ChangeStatusView(View):
             change_status.status = True
         change_status.save()
         return redirect('donations')
+
+
+class ContactFormView(View):
+    def post(self, request):
+        message = request.POST['message']
+        admins = User.objects.filter(is_superuser=True)
+        mails = [admin.email for admin in admins if len(admin.email) > 3]
+        subject = f'Kontakt od {request.POST["name"]} {request.POST["surname"]}'
+        send_email(pass_password='Gh8mck9w',
+                   recivers=mails,
+                   message=message,
+                   subject=subject
+                   )
+        return redirect('main_page')
 
 
 class CategoryListView(generics.ListCreateAPIView):

@@ -42,4 +42,5 @@ urlpatterns = [
     path('settings/', SettingsView.as_view(), name='settings'),
     path('change_status/<int:id>', ChangeStatusView.as_view(), name='change_status'),
     path('change_passwd/', PasswordChangeView.as_view(), name='password_change'),
+    path('contact/', ContactFormView.as_view(), name='contact_form'),
 ]
