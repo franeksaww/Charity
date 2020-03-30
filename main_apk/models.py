@@ -36,9 +36,7 @@ class DonationModel(models.Model):
     pick_up_time = models.TimeField()
     pick_up_comment = models.TextField()
     user = models.ForeignKey(User, null=True, default=None, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=False)
 
-
-    @property
-    def status(self):
-        return datetime.datetime.now() > datetime.datetime.combine(self.pick_up_date, self.pick_up_time)

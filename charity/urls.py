@@ -32,7 +32,14 @@ urlpatterns = [
     path('api/category/<int:id>', CategoryView.as_view(), name='category_details'),
     path('api/institution/', InstitutionsListView.as_view(), name='institutions_all'),
     path('api/institution/<int:id>', InstitutionsView.as_view(), name='institutions_details'),
+    path('api/donations/', DonationsListView.as_view(), name='donations'),
+    path('api/donations/<int:id>', DonationView.as_view(), name='donations-details'),
+
+    # user
     path('profile/', ProfileView.as_view(), name='profile'),
     path('donations/', UserDonationsView.as_view(), name='donations'),
     re_path(r'^donations/(?P<pk>[0-9]*)/$', UserDonationDetailView.as_view(), name='donation_detail'),
+    path('settings/', SettingsView.as_view(), name='settings'),
+    path('change_status/<int:id>', ChangeStatusView.as_view(), name='change_status'),
+    path('change_passwd/', PasswordChangeView.as_view(), name='password_change'),
 ]

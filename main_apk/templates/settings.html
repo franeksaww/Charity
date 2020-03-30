@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <style>
+            .center {
+                margin: auto;
+                width: 50%;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+    <h2>{{ msg }}</h2>
+    <form class="center" method="post" action="{% url 'settings' %}">
+        {% csrf_token %}
+        <div class="form-section form-section--columns">
+            <div class="form-section--column">
+                <h4>Zmień dane</h4>
+                <div class="form-group form-group--inline">
+                    <label> Imię <input type="text" name="first_name"/> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                    <label> Nazwisko <input type="text" name="last_name"/> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                    <label>
+                        Email <input type="text" name="email"/>
+                    </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                    <label>
+                        Potwierdź hasłem <input type="password" name="password1"/>
+                    </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                    <label>
+                        <input type="submit"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form class="center" method="post" action="{% url 'password_change' %}">
+        {% csrf_token %}
+        <div class="form-section form-section--columns">
+            <div class="form-section--column">
+                <h4>Zmień hasło</h4>
+                <div class="form-group form-group--inline">
+                    <label> Podaj stare hasło <input type="password" name="password2"/> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                    <label> Nowe hasło <input type="password" name="new_password"/> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                    <label>
+                        Powtórz nowe hasło <input type="password" name="new_password2"/>
+                    </label>
+                </div>
+                <div class="form-group form-group--inline">
+                    <label>
+                        <input type="submit"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </form>
+    </body>
+    </html>
+{% endblock %}

@@ -284,44 +284,47 @@ document.addEventListener("DOMContentLoaded", function () {
                     for (var k = 0; k < check.length; k++) {
                         categories.push(check[k].id)
                     }
-                    if (categories, checkedBoxes, categories.some(v => checkedBoxes.includes(v))){
-                       document.querySelector(`#ist_${d[j].id}`).style.display = "block"
+                    if (categories, checkedBoxes, categories.some(v => checkedBoxes.includes(v))) {
+                        document.querySelector(`#ist_${d[j].id}`).style.display = "block"
                     }
-                };
+                }
+                ;
             })
             .catch(e => console.log(e))
     })
 
-  var collection = document.querySelector("#collect")
-  collection.addEventListener('click', function () {
-    var bags = document.querySelector('#bags_get').value
-    var bags_text = 0
-    if(bags == 1){
-      bags_text = ' worek'
-    } else if(bags > 1 && bags < 5){
-      bags_text = ' worki'
-    } else {
-      bags_text = ' worków'
-    }
-    var rates = document.querySelectorAll('.get_inst_name');
-    var rate_value;
-    for(var i = 0; i < rates.length; i++){
-        if(rates[i].checked){
-            rate_value = rates[i].nextElementSibling.nextElementSibling.children[0].innerHTML;
-    }
-}
-    document.querySelector('#bags').innerHTML = bags + bags_text;
-    document.querySelector('#inst_final').innerHTML = 'Dla ' + rate_value;
-    document.querySelector('#postal').innerHTML = document.querySelector('#get_postal').value;
-    document.querySelector('#phone').innerHTML = document.querySelector('#get_phone').value;
-    document.querySelector('#city').innerHTML = document.querySelector('#get_city').value;
-    document.querySelector('#road').innerHTML = document.querySelector('#get_road').value;
-    document.querySelector('#hour').innerHTML = document.querySelector('#get_hour').value;
-    document.querySelector('#date').innerHTML = document.querySelector('#get_date').value;
-    document.querySelector('#more').innerHTML = document.querySelector('#get_more').value;
+    var collection = document.querySelector("#collect")
+    collection.addEventListener('click', function () {
+        var bags = document.querySelector('#bags_get').value
+        var bags_text = 0
+        if (bags == 1) {
+            bags_text = ' worek'
+        } else if (bags > 1 && bags < 5) {
+            bags_text = ' worki'
+        } else {
+            bags_text = ' worków'
+        }
+        var rates = document.querySelectorAll('.get_inst_name');
+        var rate_value;
+        for (var i = 0; i < rates.length; i++) {
+            if (rates[i].checked) {
+                rate_value = rates[i].nextElementSibling.nextElementSibling.children[0].innerHTML;
+            }
+        }
+        document.querySelector('#bags').innerHTML = bags + bags_text;
+        document.querySelector('#inst_final').innerHTML = 'Dla ' + rate_value;
+        document.querySelector('#postal').innerHTML = document.querySelector('#get_postal').value;
+        document.querySelector('#phone').innerHTML = document.querySelector('#get_phone').value;
+        document.querySelector('#city').innerHTML = document.querySelector('#get_city').value;
+        document.querySelector('#road').innerHTML = document.querySelector('#get_road').value;
+        document.querySelector('#hour').innerHTML = document.querySelector('#get_hour').value;
+        document.querySelector('#date').innerHTML = document.querySelector('#get_date').value;
+        document.querySelector('#more').innerHTML = document.querySelector('#get_more').value;
 
-  })
+    })
 });
+
+
 
 function getCheckedBoxes(chkboxName) {
     var checkboxes = document.querySelectorAll(chkboxName);

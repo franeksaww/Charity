@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework import generics
-
-from main_apk.forms import LoginForm
+import hashlib
+from main_apk.forms import LoginForm, UserForm
 from main_apk.models import DonationModel, InstitutionModel, CategoryModel
-from main_apk.serializers import CategorySerializer, InstitutionSerializer
+from main_apk.serializers import CategorySerializer, InstitutionSerializer, DonationSerializer
 
 
 class MainPageView(View):
@@ -117,8 +118,9 @@ class ProfileView(View):
 class UserDonationsView(View):
     def get(self, request):
         user = request.user
-        donations = DonationModel.objects.filter(user=user).order_by('-pick_up_date')
+        donations = DonationModel.objects.filter(user=user).order_by('status')
         return render(request, 'list_of_donations.html', {'donations': donations})
+
 
 class UserDonationDetailView(View):
     def get(self, request, pk):
@@ -127,6 +129,53 @@ class UserDonationDetailView(View):
         if donation.user == user:
             return render(request, 'donation_details..html', {'donation': donation})
         return redirect('main_page')
+
+
+class SettingsView(View):
+    def get(self, request):
+        return render(request, 'settings.html')
+
+    def post(self, request):
+        check = request.POST['password1']
+        if request.user.check_password(check):
+            user = User.objects.get(pk=request.user.id)
+            if request.POST['first_name']:
+                user.first_name = request.POST['first_name']
+            if request.POST['last_name']:
+                user.last_name = request.POST['last_name']
+            if request.POST['email']:
+                user.email = request.POST['email']
+                user.username = request.POST['email']
+            user.save()
+            msg = 'poprawnie zmieniono dane'
+            return render(request, 'settings.html', {'msg':msg})
+        msg = 'Błędne hasło!'
+        return render(request, 'settings.html', {'msg': msg})
+
+
+class PasswordChangeView(View):
+    def post(self, request):
+        check = request.POST['password2']
+        if request.user.check_password(check):
+            user = User.objects.get(pk=request.user.id)
+            if request.POST['new_password'] == request.POST['new_password2']:
+                user.set_password(request.POST['new_password'])
+                user.save()
+            return redirect('main_page')
+        msg = 'Błędne hasło'
+        return render(request, 'settings.html', {'msg':msg})
+
+
+class ChangeStatusView(View):
+    def get(self, request, id):
+        change_status = DonationModel.objects.get(pk=id)
+        if change_status.status:
+            change_status.status = False
+        else:
+            change_status.status = True
+        change_status.save()
+        return redirect('donations')
+
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = CategoryModel.objects.all()
@@ -146,3 +195,13 @@ class InstitutionsListView(generics.ListCreateAPIView):
 class InstitutionsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = InstitutionModel.objects.all()
     serializer_class = InstitutionSerializer
+
+
+class DonationsListView(generics.ListCreateAPIView):
+    queryset = DonationModel.objects.all()
+    serializer_class = DonationSerializer
+
+
+class DonationView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DonationModel.objects.all()
+    serializer_class = DonationSerializer
