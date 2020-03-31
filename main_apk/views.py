@@ -1,12 +1,19 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from rest_framework import generics
 from main_apk.forms import LoginForm
 from main_apk.models import DonationModel, InstitutionModel, CategoryModel
 from main_apk.serializers import CategorySerializer, InstitutionSerializer, DonationSerializer
-from main_apk.utils.mail_utils import send_email
+from main_apk.utils.token_security import account_activation_token
 
 
 class MainPageView(View):
@@ -64,8 +71,35 @@ class RegisterView(View):
                                             username=email,
                                             password=password,
                                             email=email)
+        new_user.is_active = False
         new_user.save()
-        return redirect('login_page')
+        current_site = get_current_site(request)
+        message = render_to_string('activate_account.html', {
+            'user': new_user, 'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+            'token': account_activation_token.make_token(new_user),
+        })
+        mail_subject = 'Activate your blog account.'
+        to_email = email
+        email = EmailMessage(mail_subject, message, to=[to_email])
+        email.send()
+        messages.info(request, 'Please confirm your email address to complete the registration')
+        return redirect('main_page')
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
 
 
 class FormView(View):
@@ -182,11 +216,8 @@ class ContactFormView(View):
         admins = User.objects.filter(is_superuser=True)
         mails = [admin.email for admin in admins if len(admin.email) > 3]
         subject = f'Kontakt od {request.POST["name"]} {request.POST["surname"]}'
-        send_email(pass_password='Gh8mck9w',
-                   recivers=mails,
-                   message=message,
-                   subject=subject
-                   )
+        email = EmailMessage(subject, message, to=mails)
+        email.send()
         return redirect('main_page')
 
 

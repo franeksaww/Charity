@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 
+from main_apk import views
 from main_apk.views import *
 
 urlpatterns = [
@@ -43,4 +44,5 @@ urlpatterns = [
     path('change_status/<int:id>', ChangeStatusView.as_view(), name='change_status'),
     path('change_passwd/', PasswordChangeView.as_view(), name='password_change'),
     path('contact/', ContactFormView.as_view(), name='contact_form'),
+    path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate')
 ]
