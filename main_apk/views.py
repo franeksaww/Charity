@@ -83,8 +83,8 @@ class RegisterView(View):
         to_email = email
         email = EmailMessage(mail_subject, message, to=[to_email])
         email.send()
-        messages.info(request, 'Please confirm your email address to complete the registration')
-        return redirect('main_page')
+        msg = 'Please confirm your email address to complete the registration'
+        return render(request, 'messages.html', {'message': msg})
 
 
 def activate(request, uidb64, token):
@@ -96,10 +96,12 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        login(request, user)
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        msg = 'Thank you for your email confirmation. Now you can login your account'
+        return render(request, 'messages.html', {'message': msg})
     else:
-        return HttpResponse('Activation link is invalid!')
+        msg = 'Activation link is invalid!'
+        return render(request, 'messages.html', {'message': msg})
+
 
 
 class FormView(View):
