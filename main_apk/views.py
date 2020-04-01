@@ -1,16 +1,14 @@
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from rest_framework import generics
-from main_apk.forms import LoginForm
+from main_apk.forms import LoginForm, ChangePasswordForm
 from main_apk.models import DonationModel, InstitutionModel, CategoryModel
 from main_apk.serializers import CategorySerializer, InstitutionSerializer, DonationSerializer
 from main_apk.utils.token_security import account_activation_token
@@ -221,6 +219,65 @@ class ContactFormView(View):
         email = EmailMessage(subject, message, to=mails)
         email.send()
         return redirect('main_page')
+
+
+class PasswordResetView(View):
+    def get(self, request):
+        form = ChangePasswordForm()
+        return render(request, 'change_password_form.html', {'form': form})
+
+    def post(self, request):
+        email = request.POST['email']
+        if email == request.POST['email2']:
+            if not User.objects.filter(email=email):
+                msg = 'Brak użytkownika o podanym adresie email'
+                return render(request, 'messages.html', {'message': msg})
+            user = User.objects.get(email=email)
+            current_site = get_current_site(request)
+            message = render_to_string('change_password_email.html', {
+                'user': user, 'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            mail_subject = 'Reset password'
+            to_email = email
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
+            msg = 'Zmień hasło używając linku otrzymanego na maila'
+            return render(request, 'messages.html', {'message': msg})
+        msg = 'Podane maile różniły się od siebie'
+        return render(request, 'messages.html', {'message': msg})
+
+
+class PasView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            return render(request, 'reset_password.html')
+        else:
+            msg = 'Activation link is invalid!'
+            return render(request, 'messages.html', {'message': msg})
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            if request.POST['password1'] == request.POST['password2']:
+                user.set_password(request.POST['password1'])
+                user.save()
+                msg = 'Hasło zostało zmienione'
+                return render(request, 'messages.html', {'message': msg})
+        else:
+            msg = 'Activation link is invalid!'
+            return render(request, 'messages.html', {'message': msg})
+
 
 
 class CategoryListView(generics.ListCreateAPIView):

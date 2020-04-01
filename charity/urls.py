@@ -44,5 +44,7 @@ urlpatterns = [
     path('change_status/<int:id>', ChangeStatusView.as_view(), name='change_status'),
     path('change_passwd/', PasswordChangeView.as_view(), name='password_change'),
     path('contact/', ContactFormView.as_view(), name='contact_form'),
-    path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate')
+    path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate'),
+    path('reset/<slug:uidb64>/<slug:token>/', PasView.as_view(), name='serious_reset'),
+    path('reset_password/', PasswordResetView.as_view(), name='reset_password')
 ]
